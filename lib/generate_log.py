@@ -1,19 +1,52 @@
+import sys
 from datetime import datetime
-import os
+# FIX: Added missing requests import
+import requests
 
-def generate_log(data):
-    # TODO: Implement log generation logic
 
-    # STEP 1: Validate input
-    # Hint: Check if data is a list
+def fetch_data():
+    """Fetches placeholder data from a public API."""
+    url = "https://jsonplaceholder.typicode.com/posts/1"
+    try:
+        response = requests.get(url, timeout=10)
+        # Raises an HTTPError if an unsuccessful status code is returned
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data from API: {e}", file=sys.stderr)
+        return {}
 
-    # STEP 2: Generate a filename with today's date (e.g., "log_20250408.txt")
-    # Hint: Use datetime.now().strftime("%Y%m%d")
 
-    # STEP 3: Write the log entries to a file using File I/O
-    # Use a with open() block and write each line from the data list
-    # Example: file.write(f"{entry}\n")
+def write_log_to_file(api_data):
+    """Processes the data and appends it to a timestamped log file."""
+    # Define generic logs alongside our dynamic API data
+    log_entries = [
+        "User logged in",
+        f"API Request Success - Fetched Title: '{api_data.get('title', 'No Title')}'",
+        "Report exported successfully"
+    ]
+    
+    # Generate a dynamic filename based on the current date
+    filename = f"log_{datetime.now().strftime('%Y%m%d')}.txt"
 
-    # STEP 4: Print a confirmation message with the filename
+    try:
+        # Open file using a context manager to guarantee proper closure
+        with open(filename, "w", encoding="utf-8") as file:
+            for entry in log_entries:
+                file.write(f"[{datetime.now().strftime('%H:%M:%S')}] {entry}\n")
+        
+        print(f"Success! Log successfully written to {filename}")
+    except IOError as e:
+        print(f"File I/O Error: {e}", file=sys.stderr)
 
-    pass
+
+if __name__ == "__main__":
+    print("Initializing automation tool...")    
+    
+    # Step 1: Fetch external data
+    post_data = fetch_data()
+    
+    # Step 2: Write data and actions to file
+    write_log_to_file(post_data)
+    
+    print("Automation execution finished.")
