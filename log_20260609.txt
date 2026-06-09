@@ -1,3 +1,0 @@
-[09:46:24] User logged in
-[09:46:24] API Request Success - Fetched Title: 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit'
-[09:46:24] Report exported successfully

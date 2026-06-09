@@ -15,27 +15,30 @@ def fetch_data():
         return {}
 
 
+def generate_log(log_data):
+    """Writes a list of log entries to a dated file and returns the filename."""
+    if not isinstance(log_data, list):
+        raise ValueError("log_data must be a list of entries")
+
+    filename = f"log_{datetime.now().strftime('%Y%m%d')}.txt"
+    with open(filename, "w", encoding="utf-8") as file:
+        for entry in log_data:
+            file.write(f"{entry}\n")
+    return filename
+
+
 def write_log_to_file(api_data):
-    """Processes the data and appends it to a timestamped log file."""
+    """Processes API data and writes a summary log file."""
     log_entries = [
         "User logged in",
-        f"API Request Success - Fetched Title: '{api_data.get('title', 'No Title')}'",
+        f"Fetched API Title: {api_data.get('title', 'No title found')}",
         "Report exported successfully"
     ]
-    
-    filename = f"log_{datetime.now().strftime('%Y%m%d')}.txt"
-
-    try:
-        with open(filename, "w", encoding="utf-8") as file:
-            for entry in log_entries:
-                file.write(f"[{datetime.now().strftime('%H:%M:%S')}] {entry}\n")
-        print(f"Success! Log written to {filename}")
-    except IOError as e:
-        print(f"File I/O Error: {e}", file=sys.stderr)
+    return generate_log(log_entries)
 
 
 if __name__ == "__main__":
-    print("Initializing automation tool...")    
+    print("Initializing automation tool...")
     post_data = fetch_data()
-    write_log_to_file(post_data)
-    print("Automation execution finished.")
+    filename = write_log_to_file(post_data)
+    print(f"Success! Log written to {filename}")
